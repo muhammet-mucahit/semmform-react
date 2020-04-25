@@ -1,22 +1,40 @@
-import React, { Component } from "react";
+import React from "react";
+import { Button, Row, Col } from "reactstrap";
+import { Link } from "react-router-dom";
 
-import { Row, Col, Card, CardText, CardTitle, Button } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+const truncate = (str) => {
+  return str.length > 20 ? str.substring(0, 20) + "..." : str;
+};
 
-import contentData from "../utils/contentData";
-
-class FormCard extends Component {
-  render() {
-    return (
-      <Card body inverse color="primary">
-        <CardTitle>Special Title Treatment</CardTitle>
-        <CardText>
-          With supporting text below as a natural lead-in to additional content.
-        </CardText>
-        <Button color="secondary">Button</Button>
-      </Card>
-    );
-  }
-}
+const FormCard = (props) => {
+  return (
+    <div className="font-icon-detail">
+      <Link to={`/form/${props.id}`} className="simple-text logo-mini">
+        <i className="tim-icons icon-alert-circle-exc" />
+        <p style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+          {truncate(props.title)}
+        </p>
+      </Link>
+      <Row>
+        <Col>
+          <Button
+            onClick={() => props.onClickRename(props.id, props.title)}
+            className="btn btn-info"
+          >
+            Rename
+          </Button>
+        </Col>
+        <Col>
+          <Button
+            onClick={() => props.onClickRemove(props.id)}
+            className="btn btn-outline btn-danger"
+          >
+            Remove
+          </Button>
+        </Col>
+      </Row>
+    </div>
+  );
+};
 
 export default FormCard;

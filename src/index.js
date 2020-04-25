@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import "assets/css/black-dashboard-react.css";
+import "assets/demo/demo.css";
+import "assets/css/nucleo-icons.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { Auth0Provider } from "./react-auth0-spa";
@@ -20,6 +22,7 @@ ReactDOM.render(
     domain={config.domain}
     client_id={config.clientId}
     redirect_uri={window.location.origin}
+    audience={config.audience}
     onRedirectCallback={onRedirectCallback}
   >
     <App />
