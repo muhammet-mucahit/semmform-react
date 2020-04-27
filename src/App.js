@@ -13,6 +13,7 @@ import Footer from "components/Footer/Footer";
 
 // styles
 import "./App.css";
+import "./assets/css/style.css";
 
 // fontawesome
 import initFontAwesome from "./utils/initFontAwesome";
