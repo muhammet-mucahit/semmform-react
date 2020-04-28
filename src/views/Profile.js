@@ -83,7 +83,7 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Last Name</label>
                         <Input
-                          defaultValue={profile.first_name}
+                          defaultValue={profile.last_name}
                           placeholder="Last Name"
                           type="text"
                           className="inputText"
@@ -96,7 +96,7 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Address</label>
                         <Input
-                          defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
+                          defaultValue={profile.address}
                           placeholder="Home Address"
                           type="text"
                           className="inputText"
@@ -109,7 +109,7 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Phone</label>
                         <Input
-                          defaultValue="Mike"
+                          defaultValue={profile.phone}
                           placeholder="Company"
                           type="text"
                           className="inputText"
@@ -120,7 +120,7 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Birthday</label>
                         <Input
-                          defaultValue="Andrew"
+                          defaultValue={profile.dob}
                           placeholder="Last Name"
                           type="text"
                           className="inputText"
@@ -133,7 +133,7 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>City</label>
                         <Input
-                          defaultValue="Mike"
+                          defaultValue={profile.city}
                           placeholder="City"
                           type="text"
                           className="inputText"
@@ -144,7 +144,7 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Country</label>
                         <Input
-                          defaultValue="Andrew"
+                          defaultValue={profile.country}
                           placeholder="Country"
                           type="text"
                           className="inputText"
@@ -154,7 +154,12 @@ const UserProfile = () => {
                     <Col className="pl-md-1" md="4">
                       <FormGroup>
                         <label>Postal Code</label>
-                        <Input placeholder="ZIP Code" type="number"  className="inputText"/>
+                        <Input
+                          defaultValue={profile.zip}
+                          placeholder="ZIP Code"
+                          type="number"
+                          className="inputText"
+                        />
                       </FormGroup>
                     </Col>
                   </Row>
