@@ -1,11 +1,9 @@
 import React from "react";
 import { Button, Row, Col } from "reactstrap";
 import { Link } from "react-router-dom";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
 const truncate = (str) => {
   return str.length > 20 ? str.substring(0, 20) + "..." : str;
 };
-
 
 const FormCard = (props) => {
   return (
@@ -17,28 +15,18 @@ const FormCard = (props) => {
         </p>
       </Link>
       <Row>
-        {/* <Col>
-          <Button
+        <div className="cardFooter">
+          <div
             onClick={() => props.onClickRename(props.id, props.title)}
-            className="btn btn-info"
+            className="cardMiniButton"
           >
-            Rename
-          </Button>
-        </Col>
-        <Col>
-          <Button
-            onClick={() => props.onClickRemove(props.id)}
-            className="btn btn-outline btn-danger"
-          >
-            Remove
-          </Button>
-        </Col> */}
-        <div className = "cardFooter">
-          <div className="cardMiniButton">
             &#x270E;
           </div>
-          <div className="cardMiniButton">
-              X
+          <div
+            onClick={() => props.onClickRemove(props.id)}
+            className="cardMiniButton"
+          >
+            X
           </div>
         </div>
       </Row>

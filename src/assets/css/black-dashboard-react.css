@@ -13334,7 +13334,7 @@ hr {
 }
 
 .main-panel>.content {
-  padding: 78px 30px 30px;
+  padding: 90px 30px 30px;
   min-height: calc(100vh - 70px);
 }
 
@@ -15114,7 +15114,7 @@ textarea.form-control {
   background: -webkit-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   background: -o-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   background: -moz-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
-  background: linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
+  background: linear-gradient(to right, rgba(255, 193, 0, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
   -webkit-transform: rotate(150deg);
   -moz-transform: rotate(150deg);
@@ -15130,7 +15130,7 @@ textarea.form-control {
   background: -webkit-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   background: -o-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   background: -moz-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
-  background: linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
+  background: linear-gradient(to right, rgba(225, 169, 78, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
   -webkit-transform: rotate(30deg);
   -moz-transform: rotate(30deg);
@@ -15146,7 +15146,7 @@ textarea.form-control {
   background: -webkit-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   background: -o-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   background: -moz-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
-  background: linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
+  background: linear-gradient(to right, rgba(225, 216, 78, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
   -webkit-transform: rotate(170deg);
   -moz-transform: rotate(170deg);
@@ -15162,7 +15162,7 @@ textarea.form-control {
   background: -webkit-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   background: -o-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   background: -moz-linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
-  background: linear-gradient(to right, rgba(225, 78, 202, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
+  background: linear-gradient(to right, rgba(225, 176, 78, 0.6) 0%, rgba(225, 78, 202, 0) 100%);
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=10);
   -webkit-transform: rotate(150deg);
   -moz-transform: rotate(150deg);

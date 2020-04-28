@@ -1,15 +1,8 @@
 import React from "react";
 import { Router, Route, Switch } from "react-router-dom";
-import { Container } from "reactstrap";
-
-import PrivateRoute from "./components/PrivateRoute";
 import Loading from "./components/Loading";
-import Home from "./views/Home";
-import Profile from "./views/Profile";
 import { useAuth0 } from "./react-auth0-spa";
 import history from "./utils/history";
-import AdminNavbar from "./components/Navbars/AdminNavbar";
-import Footer from "components/Footer/Footer";
 
 // styles
 import "./App.css";
