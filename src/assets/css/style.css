@@ -99,3 +99,10 @@
     height: 1px;
     background-color: gray;
 }
+.inputText:focus{
+    border-color: var(--secondary-color);
+    color: white;
+}
+.inputText{
+    color: white;
+}

@@ -75,6 +75,7 @@ const UserProfile = () => {
                           defaultValue={profile.first_name}
                           placeholder="Company"
                           type="text"
+                          className="inputText"
                         />
                       </FormGroup>
                     </Col>
@@ -85,6 +86,7 @@ const UserProfile = () => {
                           defaultValue={profile.first_name}
                           placeholder="Last Name"
                           type="text"
+                          className="inputText"
                         />
                       </FormGroup>
                     </Col>
@@ -97,6 +99,7 @@ const UserProfile = () => {
                           defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
                           placeholder="Home Address"
                           type="text"
+                          className="inputText"
                         />
                       </FormGroup>
                     </Col>
@@ -109,6 +112,7 @@ const UserProfile = () => {
                           defaultValue="Mike"
                           placeholder="Company"
                           type="text"
+                          className="inputText"
                         />
                       </FormGroup>
                     </Col>
@@ -119,6 +123,7 @@ const UserProfile = () => {
                           defaultValue="Andrew"
                           placeholder="Last Name"
                           type="text"
+                          className="inputText"
                         />
                       </FormGroup>
                     </Col>
@@ -131,6 +136,7 @@ const UserProfile = () => {
                           defaultValue="Mike"
                           placeholder="City"
                           type="text"
+                          className="inputText"
                         />
                       </FormGroup>
                     </Col>
@@ -141,13 +147,14 @@ const UserProfile = () => {
                           defaultValue="Andrew"
                           placeholder="Country"
                           type="text"
+                          className="inputText"
                         />
                       </FormGroup>
                     </Col>
                     <Col className="pl-md-1" md="4">
                       <FormGroup>
                         <label>Postal Code</label>
-                        <Input placeholder="ZIP Code" type="number" />
+                        <Input placeholder="ZIP Code" type="number"  className="inputText"/>
                       </FormGroup>
                     </Col>
                   </Row>
