@@ -56,6 +56,32 @@ const UserProfile = () => {
     return <Loading />;
   }
 
+  const updateUserProfile = async (event) => {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    const api = "http://localhost:8000/api/v1";
+    const token = await getTokenSilently();
+
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const username = formatUsernameWithDot(user.sub);
+
+    await axios
+      .patch(`${api}/users/${username}/`, data, {
+        headers: headers,
+      })
+      .then((response) => {
+        setProfile(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <>
       <div className="content">
@@ -66,12 +92,14 @@ const UserProfile = () => {
                 <h5 className="title">Edit Profile</h5>
               </CardHeader>
               <CardBody>
-                <Form>
+                <Form onSubmit={updateUserProfile}>
                   <Row>
                     <Col className="pr-md-1" md="6">
                       <FormGroup>
                         <label>First Name</label>
                         <Input
+                          id="first_name"
+                          name="first_name"
                           defaultValue={profile.first_name}
                           placeholder="Company"
                           type="text"
@@ -83,6 +111,8 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Last Name</label>
                         <Input
+                          id="last_name"
+                          name="last_name"
                           defaultValue={profile.last_name}
                           placeholder="Last Name"
                           type="text"
@@ -96,6 +126,8 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Address</label>
                         <Input
+                          id="address"
+                          name="address"
                           defaultValue={profile.address}
                           placeholder="Home Address"
                           type="text"
@@ -109,6 +141,8 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Phone</label>
                         <Input
+                          id="phone"
+                          name="phone"
                           defaultValue={profile.phone}
                           placeholder="Company"
                           type="text"
@@ -120,6 +154,8 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Birthday</label>
                         <Input
+                          id="dob"
+                          name="dob"
                           defaultValue={profile.dob}
                           placeholder="Last Name"
                           type="text"
@@ -133,6 +169,8 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>City</label>
                         <Input
+                          id="city"
+                          name="city"
                           defaultValue={profile.city}
                           placeholder="City"
                           type="text"
@@ -144,6 +182,8 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Country</label>
                         <Input
+                          id="country"
+                          name="country"
                           defaultValue={profile.country}
                           placeholder="Country"
                           type="text"
@@ -155,6 +195,8 @@ const UserProfile = () => {
                       <FormGroup>
                         <label>Postal Code</label>
                         <Input
+                          id="zip"
+                          name="zip"
                           defaultValue={profile.zip}
                           placeholder="ZIP Code"
                           type="number"
@@ -163,13 +205,16 @@ const UserProfile = () => {
                       </FormGroup>
                     </Col>
                   </Row>
+                  <Button type="submit" className="btn-fill" color="primary">
+                    Save
+                  </Button>
                 </Form>
               </CardBody>
-              <CardFooter>
-                <Button className="btn-fill" color="primary" type="submit">
+              {/* <CardFooter>
+                <Button type="submit" className="btn-fill" color="primary">
                   Save
                 </Button>
-              </CardFooter>
+              </CardFooter> */}
             </Card>
           </Col>
           <Col md="4">
