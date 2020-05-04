@@ -1,8 +1,119 @@
+:root {
+  --primary-color: rgb(43, 64, 174);
+  --secondary-color: rgb(255, 203, 0);
+  --third-color: rgb(26, 29, 33);
+  --text-color: white;
+}
+
+.navbar {
+  background: var(--third-color) !important;
+}
+
+.card {
+  background: var(--third-color);
+}
+
+.font-icon-detail {
+  background-color: var(--third-color);
+  min-height: 230px;
+  border: 1px solid gray;
+  border-radius: 15% 15% 3% 3%;
+}
+
+.font-icon-detail:hover {
+  border: 1px solid var(--primary-color);
+}
+
+.font-icon-detail i {
+  color: var(--text-color) !important;
+  font-weight: bold;
+}
+
+.font-icon-detail p {
+  color: var(--text-color) !important;
+  font-weight: bold;
+}
+
+.main-panel>.navbar {
+  border-bottom: 2px solid var(--secondary-color) !important;
+  border-top: 3px solid var(--secondary-color) !important;
+}
+
+.main-panel {
+  background: linear-gradient(var(--third-color), black);
+}
+
+.font-icon-detail .cardMiniButton {
+  position: absolute;
+  bottom: 25px;
+  width: 30px;
+  height: 30px;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  font-weight: bold;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 50%;
+  cursor: pointer;
+  outline: none;
+}
+
+.font-icon-detail .cardMiniButton:nth-child(1) {
+  left: 25px;
+  transform: rotate(90deg);
+}
+
+.font-icon-detail .cardMiniButton:nth-child(2) {
+  right: 25px;
+}
+
+.cardMiniButton:active {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+.copyright a {
+  color: var(--secondary-color);
+}
+
+.btn-primary {
+  background: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background: rgb(182, 145, 0) !important;
+  color: var(--third-color) !important;
+}
+
+.cardFooter::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 65px;
+  height: 1px;
+  background-color: gray;
+}
+
+.inputText:focus {
+  border-color: var(--secondary-color);
+  color: white;
+}
+
+.inputText {
+  color: white;
+}
+
 .next-steps .fa-link {
   margin-right: 5px;
 }
 
 /* Fix for use only flexbox in content area */
+
 .next-steps .row {
   margin-bottom: 0;
 }
@@ -23,7 +134,7 @@
   justify-content: center;
   height: 100vh;
   width: 100vw;
-  background-color: white;
+  background-color: transparent;
   top: 0;
   bottom: 0;
   left: 0;

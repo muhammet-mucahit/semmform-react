@@ -1,90 +1,171 @@
-import React, { Component } from "react";
-
-import { Row, Col } from "reactstrap";
-import formData from "../utils/formData";
+import React, { useEffect, useState } from "react";
+import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
 import FormCard from "./FormCard";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { notify } from "utils/notification";
+import { useAuth0 } from "react-auth0-spa";
+import axios from "axios";
+import Loading from "components/Loading";
+import API_Config from "api_config.json";
 
-class Forms extends Component {
-  constructor(props) {
-    super(props);
+const Forms = () => {
+  const { getTokenSilently } = useAuth0();
+  const [userForms, setUserForms] = useState([]);
+  const [isBusy, setIsBusy] = useState(true);
+  const [sweetalertUpdate, setSweetalertUpdate] = useState(false);
+  const [title, setTitle] = useState("");
+  const [id, setId] = useState(-1);
 
-    this.state = {
-      formData: formData,
-      sweetalertUpdate: false,
-      id: -1,
-      title: "",
+  useEffect(() => {
+    const getUserForms = async () => {
+      const api = API_Config.url;
+      const token = await getTokenSilently();
+
+      const headers = {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      await axios
+        .get(`${api}/forms`, {
+          headers: headers,
+        })
+        .then((response) => {
+          setUserForms(response.data);
+          setIsBusy(false);
+        })
+        .catch((error) => {
+          notify(error, "danger");
+          console.error(error);
+        });
     };
+    getUserForms();
+  }, [getTokenSilently]);
+
+  if (isBusy) {
+    return <Loading />;
   }
 
-  onClickRename = (id, title) => {
-    console.log(id, title);
-    this.setState({
-      id: id,
-      title: title,
-    });
-    this.toggle();
+  const onClickRename = (id, title) => {
+    setId(id);
+    setTitle(title);
+    toggle();
   };
 
-  toggle = () => {
-    this.setState({
-      sweetalertUpdate: !this.state.sweetalertUpdate,
-    });
+  const toggle = () => {
+    setSweetalertUpdate(!sweetalertUpdate);
   };
 
-  onClickRemove = (formId) => {
-    this.setState({
-      formData: this.state.formData.filter((i) => i.id !== formId),
-    });
+  const deleteForm = async (id) => {
+    const api = API_Config.url;
+    const token = await getTokenSilently();
+
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    await axios
+      .delete(`${api}/forms/${id}/`, {
+        headers: headers,
+      })
+      .then(() => {
+        setIsBusy(false);
+        notify("The form deleted successfully!", "success");
+      })
+      .catch((error) => {
+        notify(error, "danger");
+        console.error(error);
+      });
   };
 
-  onRename = (newTitle) => {
-    for (var i in formData) {
-      if (formData[i].id === this.state.id) {
-        formData[i].title = newTitle;
+  const onClickRemove = (formId) => {
+    setUserForms(userForms.filter((i) => i.id !== formId));
+    deleteForm(formId);
+  };
+
+  const onRename = async (newTitle) => {
+    for (var i in userForms) {
+      if (userForms[i].id === id) {
+        userForms[i].title = newTitle;
         break;
       }
     }
-    this.toggle();
+    toggle();
+
+    const api = API_Config.url;
+    const token = await getTokenSilently();
+
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    await axios
+      .patch(
+        `${api}/forms/${id}/`,
+        { title: newTitle },
+        {
+          headers: headers,
+        }
+      )
+      .then(() => {
+        setIsBusy(false);
+        notify("The form renamed successfully!", "success");
+      })
+      .catch((error) => {
+        setIsBusy(false);
+        notify(error, "danger");
+        console.error(error);
+      });
   };
 
-  render() {
-    return (
-      <div className="next-steps">
-        <Row>
-          {this.state.formData.map((col, i) => (
-            <Col
-              key={i}
-              className="font-icon-list col-xs-6 col-xs-6"
-              lg="2"
-              md="3"
-              sm="4"
-            >
-              <FormCard
-                id={col.id}
-                title={col.title}
-                onClickRename={this.onClickRename}
-                onClickRemove={this.onClickRemove}
-              />
-            </Col>
-          ))}
-        </Row>
-        <SweetAlert
-          show={this.state.sweetalertUpdate}
-          input
-          showCancel
-          defaultValue={this.state.title}
-          cancelBtnBsStyle="danger"
-          confirmBtnBsStyle="info"
-          title="Rename"
-          onConfirm={(response) => this.onRename(response)}
-          onCancel={this.toggle}
-        >
-          Please enter a new name for the item
-        </SweetAlert>
-      </div>
-    );
-  }
-}
+  return (
+    <Row>
+      <Col md="12">
+        <Card>
+          <CardHeader>
+            <h3 className="title">My Forms</h3>
+          </CardHeader>
+          <CardBody className="all-icons">
+            <div className="next-steps">
+              <Row>
+                {userForms.map((col, i) => (
+                  <Col
+                    key={i}
+                    className="font-icon-list col-xs-6 col-xs-6"
+                    lg="2"
+                    md="3"
+                    sm="4"
+                  >
+                    <FormCard
+                      id={col.id}
+                      title={col.title}
+                      onClickRename={onClickRename}
+                      onClickRemove={onClickRemove}
+                    />
+                  </Col>
+                ))}
+              </Row>
+              <SweetAlert
+                show={sweetalertUpdate}
+                input
+                showCancel
+                defaultValue={title}
+                cancelBtnBsStyle="danger"
+                confirmBtnBsStyle="info"
+                title="Rename"
+                onConfirm={(response) => onRename(response)}
+                onCancel={toggle}
+              >
+                Please enter a new name for the item
+              </SweetAlert>
+            </div>
+          </CardBody>
+        </Card>
+      </Col>
+    </Row>
+  );
+};
 
 export default Forms;

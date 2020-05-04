@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Nav, NavItem, NavLink } from "reactstrap";
+import { Container, Nav, NavItem, NavLink } from "reactstrap";
 
 class Footer extends React.Component {
   render() {
@@ -21,7 +21,11 @@ class Footer extends React.Component {
           <div className="copyright">
             © {new Date().getFullYear()} made with{" "}
             <i className="tim-icons icon-heart-2" /> by{" "}
-            <a href="https://semm-academy.github.io/" target="_blank">
+            <a
+              href="https://semm-academy.github.io/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               S3MM Academy
             </a>{" "}
           </div>

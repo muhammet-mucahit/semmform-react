@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "assets/css/black-dashboard-react.css";
-import "assets/demo/demo.css";
 import "assets/css/nucleo-icons.css";
-import App from "./App";
+import "react-notification-alert/dist/animate.css";
+import App from "App";
 import * as serviceWorker from "./serviceWorker";
 import { Auth0Provider } from "./react-auth0-spa";
 import config from "./auth_config.json";
