@@ -1,11 +1,12 @@
 import React from "react";
-import { Button, Row, Col } from "reactstrap";
+import { Row } from "reactstrap";
 import { Link } from "react-router-dom";
-const truncate = (str) => {
-  return str.length > 20 ? str.substring(0, 20) + "..." : str;
-};
 
 const FormCard = (props) => {
+  const truncate = (str) => {
+    return str.length > 20 ? str.substring(0, 20) + "..." : str;
+  };
+
   return (
     <div className="font-icon-detail">
       <Link to={`/form/${props.id}`} className="simple-text logo-mini">

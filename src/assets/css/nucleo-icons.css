@@ -32,7 +32,7 @@ Created using IcoMoon - icomoon.io
 .font-icon-detail {
   text-align: center;
   padding: 30px 0 30px;
-  border: 1px solid gray;
+  border: 1px solid #e44cc4;
   border-radius: .1875rem;
   margin: 15px 0;
   min-height: 168px;
@@ -44,7 +44,7 @@ Created using IcoMoon - icomoon.io
 }
 
 .font-icon-detail p {
-  color: white !important;
+  color: #e44cc4 !important;
   margin-top: 30px;
   padding: 0 10px;
   font-size: .7142em;

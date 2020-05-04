@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavLink as RouterNavLink } from "react-router-dom";
+import { useAuth0 } from "react-auth0-spa";
 import {
   Button,
   Collapse,
@@ -17,9 +18,7 @@ import {
   Modal,
 } from "reactstrap";
 
-import { useAuth0 } from "react-auth0-spa";
-
-const AdminNavbar = () => {
+const NavBar = () => {
   const [collapseOpen, setCollapseOpen] = useState(false);
   const [modalSearch, setModalSearch] = useState(false);
   const toggleModalSearch = () => setModalSearch(!modalSearch);
@@ -70,6 +69,16 @@ const AdminNavbar = () => {
                   activeClassName="router-link-exact-active"
                 >
                   API
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink
+                  tag={RouterNavLink}
+                  to="/form/new"
+                  exact
+                  activeClassName="router-link-exact-active"
+                >
+                  New Form
                 </NavLink>
               </NavItem>
             </Nav>
@@ -160,4 +169,4 @@ const AdminNavbar = () => {
   );
 };
 
-export default AdminNavbar;
+export default NavBar;

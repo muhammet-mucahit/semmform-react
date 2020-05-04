@@ -1,17 +1,14 @@
 import React from "react";
 import { Router, Route, Switch } from "react-router-dom";
-import Loading from "./components/Loading";
-import { useAuth0 } from "./react-auth0-spa";
-import history from "./utils/history";
+import Loading from "components/Loading";
+import history from "utils/history";
+import HomeLayout from "components/Layout/HomeLayout";
+import NotificationAlert from "react-notification-alert";
+import notificationRef from "utils/notification";
+import { useAuth0 } from "react-auth0-spa";
 
 // styles
-import "./App.css";
-import "./assets/css/style.css";
-
-// fontawesome
-import initFontAwesome from "./utils/initFontAwesome";
-import HomeLayout from "./components/Layout/HomeLayout";
-initFontAwesome();
+import "App.css";
 
 const App = () => {
   const { loading } = useAuth0();
@@ -21,11 +18,16 @@ const App = () => {
   }
 
   return (
-    <Router history={history}>
-      <Switch>
-        <Route path="/" component={HomeLayout} />
-      </Switch>
-    </Router>
+    <>
+      <div className="react-notification-alert-container">
+        <NotificationAlert ref={notificationRef} />
+      </div>
+      <Router history={history}>
+        <Switch>
+          <Route path="/" component={HomeLayout} />
+        </Switch>
+      </Router>
+    </>
   );
 };
 
