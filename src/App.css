@@ -140,3 +140,28 @@
   left: 0;
   right: 0;
 }
+
+.sidebar {
+  background: linear-gradient(0deg, #e9bf2a 0%, #ce9626 100%);
+  /* margin: ; */
+}
+
+.btn-danger {
+  /* background: #0b50d2; */
+  background-image: linear-gradient(to bottom left, #f10808, #292929, #b1c416);
+  background-size: 210% 210%;
+  background-position: top right;
+  background-color: #6b0000;
+  transition: all 0.15s ease;
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.list-group-item {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.5rem;
+  margin-bottom: 0.2rem;
+  background-color: #292929;
+  border: none
+}
