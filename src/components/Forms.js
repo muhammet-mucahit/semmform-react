@@ -9,7 +9,7 @@ import Loading from "components/Loading";
 import API_Config from "api_config.json";
 
 const Forms = () => {
-  const { getTokenSilently } = useAuth0();
+  const { isAuthenticated, getTokenSilently } = useAuth0();
   const [userForms, setUserForms] = useState([]);
   const [isBusy, setIsBusy] = useState(true);
   const [sweetalertUpdate, setSweetalertUpdate] = useState(false);
@@ -42,7 +42,7 @@ const Forms = () => {
     getUserForms();
   }, [getTokenSilently]);
 
-  if (isBusy) {
+  if (isAuthenticated && isBusy) {
     return <Loading />;
   }
 
