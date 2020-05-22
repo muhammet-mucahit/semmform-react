@@ -12,6 +12,7 @@ import {
   ListGroup,
   ListGroupItem,
   CustomInput,
+  CardHeader,
 } from "reactstrap";
 
 import { notify } from "utils/notification";
@@ -26,6 +27,8 @@ import { Link } from "react-router-dom";
 const FormDetail = (props) => {
   const [form, setForm] = useState(null);
   const [isBusy, setIsBusy] = useState(true);
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
   const [isBusyAnswers, setIsBusyAnswers] = useState(true);
   const [formElements, setFormElements] = useState([]);
   const [formAnswers, setFormAnswers] = useState([]);
@@ -79,14 +82,20 @@ const FormDetail = (props) => {
 
     const question = data.get("question");
     const type = data.get("type");
+    let isRequired = data.get("isRequired") === "on" ? true : false;
 
     setFormElements(
       formElements.concat({
+        id: "_" + Math.random().toString(36).substr(2, 9),
         question: question,
         type: type,
-        required: "required",
+        is_required: isRequired,
       })
     );
+  };
+
+  const onClickDeleteElement = (id) => {
+    setFormElements(formElements.filter((e) => e.id !== id));
   };
 
   let items = formElements.map((element, i) => {
@@ -94,9 +103,27 @@ const FormDetail = (props) => {
       case "Short Answer":
         return (
           <Card key={i}>
+            <CardHeader>
+              <Row>
+                <Col md="10">
+                  <h4>
+                    {element.question} {element.is_required ? " *" : ""}
+                  </h4>
+                </Col>
+                <Col md="2">
+                  <Button
+                    className="btn-danger"
+                    size="sm"
+                    style={{ float: "right" }}
+                    onClick={() => onClickDeleteElement(element.id)}
+                  >
+                    X
+                  </Button>
+                </Col>
+              </Row>
+            </CardHeader>
             <CardBody>
               <FormGroup>
-                <label>{element.question}</label>
                 <Input
                   id="answer"
                   name="answer"
@@ -111,14 +138,102 @@ const FormDetail = (props) => {
       case "Paragraph":
         return (
           <Card key={i}>
+            <CardHeader>
+              <Row>
+                <Col md="10">
+                  <h4>
+                    {element.question} {element.is_required ? " *" : ""}
+                  </h4>
+                </Col>
+                <Col md="2">
+                  <Button
+                    className="btn-danger"
+                    size="sm"
+                    style={{ float: "right" }}
+                    onClick={() => onClickDeleteElement(element.id)}
+                  >
+                    X
+                  </Button>
+                </Col>
+              </Row>
+            </CardHeader>
             <CardBody>
               <FormGroup>
-                <label>{element.question}</label>
                 <Input
                   id="answer"
                   name="answer"
                   ows="4"
                   type="textarea"
+                  className="inputText"
+                  disabled
+                />
+              </FormGroup>
+            </CardBody>
+          </Card>
+        );
+      case "Date":
+        return (
+          <Card key={i}>
+            <CardHeader>
+              <Row>
+                <Col md="10">
+                  <h4>
+                    {element.question} {element.is_required ? " *" : ""}
+                  </h4>
+                </Col>
+                <Col md="2">
+                  <Button
+                    className="btn-danger"
+                    size="sm"
+                    style={{ float: "right" }}
+                    onClick={() => onClickDeleteElement(element.id)}
+                  >
+                    X
+                  </Button>
+                </Col>
+              </Row>
+            </CardHeader>
+            <CardBody>
+              <FormGroup>
+                <Input
+                  id="answer"
+                  name="answer"
+                  type="date"
+                  className="inputText"
+                  disabled
+                />
+              </FormGroup>
+            </CardBody>
+          </Card>
+        );
+      case "Time":
+        return (
+          <Card key={i}>
+            <CardHeader>
+              <Row>
+                <Col md="10">
+                  <h4>
+                    {element.question} {element.is_required ? " *" : ""}
+                  </h4>
+                </Col>
+                <Col md="2">
+                  <Button
+                    className="btn-danger"
+                    size="sm"
+                    style={{ float: "right" }}
+                    onClick={() => onClickDeleteElement(element.id)}
+                  >
+                    X
+                  </Button>
+                </Col>
+              </Row>
+            </CardHeader>
+            <CardBody>
+              <FormGroup>
+                <Input
+                  id="answer"
+                  name="answer"
+                  type="time"
                   className="inputText"
                   disabled
                 />
@@ -141,6 +256,14 @@ const FormDetail = (props) => {
       Authorization: `Bearer ${token}`,
     };
 
+    const data = {
+      title: title,
+      description: desc,
+      fields: [],
+    };
+    
+    data.fields = formElements;
+    
     await axios
       .post(`${api}/forms/${formId}/formfields/`, formElements, {
         headers: headers,
@@ -339,6 +462,12 @@ const FormDetail = (props) => {
                       >
                         <option>Short Answer</option>
                         <option>Paragraph</option>
+                        <option>Multiple Choice</option>
+                        <option>Checkboxes</option>
+                        <option>Dropdown</option>
+                        <option>File Upload</option>
+                        <option>Date</option>
+                        <option>Time</option>
                       </Input>
                     </FormGroup>
                     <Row className="text-center">
@@ -382,12 +511,15 @@ const FormDetail = (props) => {
         )}
       </div>
       <SweetAlert
+        success
         show={sweetalertUpdate}
         confirmBtnBsStyle="info"
         title="Share Link"
         onConfirm={toggle}
       >
-        <Link to={"/form/answers/" + form.answer_link_id}>Form Link</Link>
+        <Link target="_blank" to={"/form/answers/" + form.answer_link_id}>
+          Form Link
+        </Link>
       </SweetAlert>
     </div>
   );

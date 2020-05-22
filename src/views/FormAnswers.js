@@ -17,7 +17,6 @@ import axios from "axios";
 import Loading from "components/Loading";
 import API_Config from "api_config.json";
 import { useAuth0 } from "react-auth0-spa";
-// import SweetAlert from "react-bootstrap-sweetalert";
 import Page404 from "views/404";
 import { Redirect } from "react-router-dom";
 
@@ -27,7 +26,6 @@ const FormAnswers = (props) => {
   const [formElements, setFormElements] = useState([]);
   const [onSuccessFormSubmit, setOnSuccessFormSubmit] = useState(false);
   const { getTokenSilently } = useAuth0();
-  // const [sweetalertUpdate, setSweetalertUpdate] = useState(false);
   const {
     match: { params },
   } = props;
@@ -106,7 +104,9 @@ const FormAnswers = (props) => {
           <Card key={i}>
             <CardBody>
               <FormGroup>
-                <h5>{element.question}</h5>
+                <h5>
+                  {element.question} {element.is_required ? " *" : ""}
+                </h5>
                 <Input
                   id="answer"
                   name={name}
@@ -123,12 +123,52 @@ const FormAnswers = (props) => {
           <Card key={i}>
             <CardBody>
               <FormGroup>
-                <h5>{element.question}</h5>
+                <h5>
+                  {element.question} {element.is_required ? " *" : ""}
+                </h5>
                 <Input
                   id="answer"
                   name={name}
                   ows="4"
                   type="textarea"
+                  className="inputText"
+                  required={element.is_required}
+                />
+              </FormGroup>
+            </CardBody>
+          </Card>
+        );
+      case "Date":
+        return (
+          <Card key={i}>
+            <CardBody>
+              <FormGroup>
+                <h5>
+                  {element.question} {element.is_required ? " *" : ""}
+                </h5>
+                <Input
+                  id="answer"
+                  name={name}
+                  type="date"
+                  className="inputText"
+                  required={element.is_required}
+                />
+              </FormGroup>
+            </CardBody>
+          </Card>
+        );
+      case "Time":
+        return (
+          <Card key={i}>
+            <CardBody>
+              <FormGroup>
+                <h5>
+                  {element.question} {element.is_required ? " *" : ""}
+                </h5>
+                <Input
+                  id="answer"
+                  name={name}
+                  type="time"
                   className="inputText"
                   required={element.is_required}
                 />
