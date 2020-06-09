@@ -1,62 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col, Card, CardHeader, CardBody } from "reactstrap";
+import React, { useState } from "react";
+import { Row, Col } from "reactstrap";
 import FormCard from "./FormCard";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { notify } from "utils/notification";
 import { useAuth0 } from "react-auth0-spa";
-import axios from "axios";
-import Loading from "components/Loading";
+import empty_forms from "assets/empty_forms.svg";
 import API_Config from "api_config.json";
+import axios from "axios";
 
-const Forms = () => {
-  const { isAuthenticated, getTokenSilently } = useAuth0();
-  const [userForms, setUserForms] = useState([]);
-  const [isBusy, setIsBusy] = useState(true);
-  const [sweetalertUpdate, setSweetalertUpdate] = useState(false);
-  const [title, setTitle] = useState("");
-  const [id, setId] = useState(-1);
-
-  useEffect(() => {
-    const getUserForms = async () => {
-      const api = API_Config.url;
-      const token = await getTokenSilently();
-
-      const headers = {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      };
-
-      await axios
-        .get(`${api}/forms`, {
-          headers: headers,
-        })
-        .then((response) => {
-          setUserForms(response.data);
-          setIsBusy(false);
-        })
-        .catch((error) => {
-          notify(error, "danger");
-          console.error(error);
-        });
-    };
-    getUserForms();
-  }, [getTokenSilently]);
-
-  if (isAuthenticated && isBusy) {
-    return <Loading />;
-  }
-
-  const onClickRename = (id, title) => {
-    setId(id);
-    setTitle(title);
-    toggle();
-  };
+const Forms = (props) => {
+  const [showSweetalertUpdate, setShowweetalertUpdate] = useState(false);
+  const [form, setForm] = useState({ id: "", title: "" });
+  const { forms, setForms } = props;
+  const { getTokenSilently } = useAuth0();
 
   const toggle = () => {
-    setSweetalertUpdate(!sweetalertUpdate);
+    setShowweetalertUpdate(!showSweetalertUpdate);
   };
 
-  const deleteForm = async (id) => {
+  const deleteFormApiRequest = async (id) => {
     const api = API_Config.url;
     const token = await getTokenSilently();
 
@@ -69,10 +31,6 @@ const Forms = () => {
       .delete(`${api}/forms/${id}/`, {
         headers: headers,
       })
-      .then(() => {
-        setIsBusy(false);
-        notify("The form deleted successfully!", "success");
-      })
       .catch((error) => {
         notify(error, "danger");
         console.error(error);
@@ -80,19 +38,12 @@ const Forms = () => {
   };
 
   const onClickRemove = (formId) => {
-    setUserForms(userForms.filter((i) => i.id !== formId));
-    deleteForm(formId);
+    setForms(forms.filter((i) => i.id !== formId));
+    notify("The form deleted successfully", "info");
+    deleteFormApiRequest(formId);
   };
 
-  const onRename = async (newTitle) => {
-    for (var i in userForms) {
-      if (userForms[i].id === id) {
-        userForms[i].title = newTitle;
-        break;
-      }
-    }
-    toggle();
-
+  const updateFormApiRequest = async (newTitle) => {
     const api = API_Config.url;
     const token = await getTokenSilently();
 
@@ -101,70 +52,75 @@ const Forms = () => {
       Authorization: `Bearer ${token}`,
     };
 
+    const newTitleData = { title: newTitle };
+
     await axios
-      .patch(
-        `${api}/forms/${id}/`,
-        { title: newTitle },
-        {
-          headers: headers,
-        }
-      )
-      .then(() => {
-        setIsBusy(false);
-        notify("The form renamed successfully!", "success");
+      .patch(`${api}/forms/${form.id}/`, newTitleData, {
+        headers: headers,
       })
       .catch((error) => {
-        setIsBusy(false);
         notify(error, "danger");
         console.error(error);
       });
   };
 
+  const onClickRename = (form) => {
+    setForm(form);
+    toggle();
+  };
+
+  const onRename = (newTitle) => {
+    for (var i in forms) {
+      if (forms[i].id === form.id) {
+        forms[i].title = newTitle;
+        break;
+      }
+    }
+    notify("The form renamed successfully", "success");
+    updateFormApiRequest(newTitle);
+    toggle();
+  };
+
   return (
-    <Row>
-      <Col md="12">
-        <Card>
-          <CardHeader>
-            <h3 className="title">My Forms</h3>
-          </CardHeader>
-          <CardBody className="all-icons">
-            <div className="next-steps">
-              <Row>
-                {userForms.map((col, i) => (
-                  <Col
-                    key={i}
-                    className="font-icon-list col-xs-6 col-xs-6"
-                    lg="2"
-                    md="3"
-                    sm="4"
-                  >
-                    <FormCard
-                      id={col.id}
-                      title={col.title}
-                      onClickRename={onClickRename}
-                      onClickRemove={onClickRemove}
-                    />
-                  </Col>
-                ))}
-              </Row>
-              <SweetAlert
-                show={sweetalertUpdate}
-                input
-                showCancel
-                defaultValue={title}
-                cancelBtnBsStyle="danger"
-                confirmBtnBsStyle="info"
-                title="Rename"
-                onConfirm={(response) => onRename(response)}
-                onCancel={toggle}
-              >
-                Please enter a new name for the item
-              </SweetAlert>
-            </div>
-          </CardBody>
-        </Card>
-      </Col>
-    </Row>
+    <div className="next-steps">
+      {forms.length > 0 ? (
+        <Row>
+          {forms.map((col, i) => (
+            <Col
+              key={i}
+              className="font-icon-list col-xs-6 col-xs-6"
+              lg="2"
+              md="3"
+              sm="4"
+            >
+              <FormCard
+                id={col.id}
+                title={col.title}
+                onClickRename={onClickRename}
+                onClickRemove={onClickRemove}
+              />
+            </Col>
+          ))}
+          <SweetAlert
+            show={showSweetalertUpdate}
+            input
+            showCancel
+            cancelBtnBsStyle="danger"
+            confirmBtnBsStyle="info"
+            title="Rename"
+            onConfirm={(newTitle) => onRename(newTitle)}
+            onCancel={toggle}
+          >
+            Please enter a new name for the item
+          </SweetAlert>
+        </Row>
+      ) : (
+        <div style={{ textAlign: "center" }}>
+          <img className="warning" src={empty_forms} alt="No Forms" />
+          <h3>No Forms Found</h3>
+        </div>
+      )}
+    </div>
   );
 };
 

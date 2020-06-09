@@ -1,45 +1,57 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import SweetAlert from "react-bootstrap-sweetalert";
+import { notify } from "utils/notification";
+import no_answer from "assets/no_answer.svg";
+import { useAuth0 } from "react-auth0-spa";
+import API_Config from "api_config.json";
+import axios from "axios";
+import loading from "assets/loading.svg";
 import {
   Button,
   Card,
   CardBody,
   FormGroup,
-  ButtonGroup,
   Form,
   Input,
   Row,
   Col,
-  ListGroup,
-  ListGroupItem,
   CustomInput,
   CardHeader,
+  ButtonGroup,
+  ListGroup,
+  ListGroupItem,
 } from "reactstrap";
-
-import { notify } from "utils/notification";
-import axios from "axios";
 import Loading from "components/Loading";
-import API_Config from "api_config.json";
-import { useAuth0 } from "react-auth0-spa";
-import SweetAlert from "react-bootstrap-sweetalert";
-import Page404 from "views/404";
-import { Link } from "react-router-dom";
 
 const FormDetail = (props) => {
-  const [form, setForm] = useState(null);
-  const [isBusy, setIsBusy] = useState(true);
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [isBusyAnswers, setIsBusyAnswers] = useState(true);
-  const [formElements, setFormElements] = useState([]);
-  const [formAnswers, setFormAnswers] = useState([]);
+  const [form, setForm] = useState({});
   const [isAnswersPageActive, setIsAnswersPageActive] = useState(false);
-  const { getTokenSilently } = useAuth0();
+  const [isFieldAdded, setIsFieldAdded] = useState(true);
+  const [hidden, setHidden] = useState(true);
+  const [formFields, setFormFields] = useState([]);
+  const [formAnswers, setFormAnswers] = useState([]);
+  const [options, setOptions] = useState([]);
   const [sweetalertUpdate, setSweetalertUpdate] = useState(false);
-  const {
-    match: { params },
-  } = props;
+  const { formId, forms } = props;
+  const { getTokenSilently } = useAuth0();
+  const [isBusyAnswers, setIsBusyAnswers] = useState(true);
 
-  const getFormDetail = async (id) => {
+  useEffect(() => {
+    const currentFormId = parseInt(formId);
+    const currentForm = forms.filter((f) => f.id === currentFormId)[0];
+    setForm(currentForm);
+    setFormFields(currentForm.fields);
+    console.log(currentForm);
+  }, [forms, formId]);
+
+  const onClickQuestionsTab = () => {
+    // getFormDetail(params.formId);
+    setIsAnswersPageActive(false);
+  };
+
+  const getFormAnswers = async (link) => {
+    setIsBusyAnswers(true);
     const api = API_Config.url;
     const token = await getTokenSilently();
 
@@ -49,34 +61,107 @@ const FormDetail = (props) => {
     };
 
     await axios
-      .get(`${api}/forms/${id}`, {
+      .get(`${api}/forms/answers/answer/${link}`, {
         headers: headers,
       })
       .then((response) => {
-        setForm(response.data);
-        setFormElements(response.data.fields);
-        setIsBusy(false);
+        setFormAnswers(response.data);
+        setIsBusyAnswers(false);
       })
       .catch((error) => {
         notify(error, "danger");
-        setIsBusy(false);
         console.error(error);
       });
   };
 
-  useEffect(() => {
-    getFormDetail(params.formId);
-  }, []);
+  const onClickAnswersTab = () => {
+    const link = form.answer_link_id;
+    getFormAnswers(link);
+    setIsAnswersPageActive(true);
+  };
 
-  if (isBusy) {
-    return <Loading />;
-  }
+  const groupBy = (key) => (array) =>
+    array.reduce((objectsByKeyValue, obj) => {
+      const value = obj[key];
+      objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
+      return objectsByKeyValue;
+    }, {});
 
-  if (!form) {
-    return <Page404 />;
-  }
+  const groupByQuestion = groupBy("question");
+  let groupedAnswers = groupByQuestion(formAnswers);
 
-  const onSubmit = (event) => {
+  let answers = isBusyAnswers ? (
+    <Loading />
+  ) : formAnswers.length > 0 ? (
+    Object.values(groupedAnswers).map((question, i) => {
+      const questionId = question[0].question;
+      return (
+        <Row key={i}>
+          <Col md="12">
+            <Card>
+              <CardBody>
+                <h4 key={i}>
+                  {formFields.filter((e) => (e.id = questionId))[0] !==
+                  undefined
+                    ? formFields.filter((e) => (e.id = questionId))[0].question
+                    : ""}
+                  {/* {formFields.filter((e) => (e.id = questionId))[0].question} */}
+                </h4>
+                <ListGroup>
+                  {Object.values(question).map((answer, i) => (
+                    <ListGroupItem key={i}>
+                      <label>{answer.answer}</label>
+                    </ListGroupItem>
+                  ))}
+                </ListGroup>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      );
+    })
+  ) : (
+    <Row>
+      <Col md="12">
+        <Card>
+          <CardBody className="text-center">
+            <img className="warning" src={no_answer} alt="No Answer" />
+            <h4>There is no answer, yet!</h4>
+          </CardBody>
+        </Card>
+      </Col>
+    </Row>
+  );
+
+  const addFormFieldApiRequest = async (data) => {
+    const api = API_Config.url;
+    const token = await getTokenSilently();
+
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    await axios
+      .post(`${api}/forms/${form.id}/formfields/`, data, {
+        headers: headers,
+      })
+      .then((response) => {
+        const newFormFields = formFields.concat(response.data);
+        setFormFields(newFormFields);
+        form.fields = newFormFields;
+        setForm(form);
+        notify("The field added successfully", "success");
+      })
+      .catch((error) => {
+        notify(error, "danger");
+        console.error(error);
+      });
+    setIsFieldAdded(true);
+  };
+
+  const onSaveFormElement = (event) => {
+    setIsFieldAdded(false);
     event.preventDefault();
     const data = new FormData(event.target);
 
@@ -84,21 +169,56 @@ const FormDetail = (props) => {
     const type = data.get("type");
     let isRequired = data.get("isRequired") === "on" ? true : false;
 
-    setFormElements(
-      formElements.concat({
-        id: "_" + Math.random().toString(36).substr(2, 9),
-        question: question,
-        type: type,
-        is_required: isRequired,
+    let optionValues = [];
+    if (type === "Checkboxes" || type === "Multiple Choice") {
+      optionValues = [];
+      for (var i = 0; i < 1000; i++) {
+        if (!data.get("option_" + i)) break;
+        const option = data.get("option_" + i);
+        optionValues.push(option);
+      }
+    }
+
+    const newFieldData = {
+      question: question,
+      option_values: optionValues,
+      type: type,
+      is_required: isRequired,
+    };
+
+    addFormFieldApiRequest(newFieldData);
+  };
+
+  const deleteFormFieldApiRequest = async (fieldId) => {
+    const api = API_Config.url;
+    const token = await getTokenSilently();
+
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    await axios
+      .delete(`${api}/formfields/${fieldId}`, {
+        headers: headers,
       })
-    );
+      .catch((error) => {
+        notify(error, "danger");
+        console.error(error);
+      });
   };
 
   const onClickDeleteElement = (id) => {
-    setFormElements(formElements.filter((e) => e.id !== id));
+    const newFormFields = formFields.filter((e) => e.id !== id);
+    setFormFields(newFormFields);
+    form.fields = newFormFields;
+    setForm(form);
+    setFormAnswers(formAnswers.filter((f) => f.question !== id));
+    notify("The field deleted successfully", "success");
+    deleteFormFieldApiRequest(id);
   };
 
-  let items = formElements.map((element, i) => {
+  let items = formFields.map((element, i) => {
     switch (element.type) {
       case "Short Answer":
         return (
@@ -241,58 +361,139 @@ const FormDetail = (props) => {
             </CardBody>
           </Card>
         );
+      case "Checkboxes":
+        return (
+          <Card key={i}>
+            <CardHeader>
+              <Row>
+                <Col md="10">
+                  <h4>
+                    {element.question} {element.is_required ? " *" : ""}
+                  </h4>
+                </Col>
+                <Col md="2">
+                  <Button
+                    className="btn-danger"
+                    size="sm"
+                    style={{ float: "right" }}
+                    onClick={() => onClickDeleteElement(element.id)}
+                  >
+                    X
+                  </Button>
+                </Col>
+              </Row>
+            </CardHeader>
+            <CardBody>
+              <FormGroup>
+                {element.option_values.map((label, i) => (
+                  <CustomInput
+                    key={i}
+                    type="checkbox"
+                    id="answer"
+                    name="answer"
+                    label={label}
+                    className="inputText"
+                    disabled
+                  />
+                ))}
+              </FormGroup>
+            </CardBody>
+          </Card>
+        );
+      case "Multiple Choice":
+        return (
+          <Card key={i}>
+            <CardHeader>
+              <Row>
+                <Col md="10">
+                  <h4>
+                    {element.question} {element.is_required ? " *" : ""}
+                  </h4>
+                </Col>
+                <Col md="2">
+                  <Button
+                    className="btn-danger"
+                    size="sm"
+                    style={{ float: "right" }}
+                    onClick={() => onClickDeleteElement(element.id)}
+                  >
+                    X
+                  </Button>
+                </Col>
+              </Row>
+            </CardHeader>
+            <CardBody>
+              <FormGroup>
+                {element.option_values.map((label, i) => (
+                  <CustomInput
+                    key={i}
+                    type="radio"
+                    id="answer"
+                    name="answer"
+                    label={label}
+                    className="inputText"
+                    disabled
+                  />
+                ))}
+              </FormGroup>
+            </CardBody>
+          </Card>
+        );
       default:
         return "";
     }
   });
 
-  const onClickSave = async () => {
-    let formId = params.formId;
-    const api = API_Config.url;
-    const token = await getTokenSilently();
-
-    const headers = {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-
-    const data = {
-      title: title,
-      description: desc,
-      fields: [],
-    };
-    
-    data.fields = formElements;
-    
-    await axios
-      .post(`${api}/forms/${formId}/formfields/`, formElements, {
-        headers: headers,
-      })
-      .then((response) => {
-        notify("Form saved successfully..", "success");
-      })
-      .catch((error) => {
-        notify(error, "danger");
-        setIsBusy(false);
-        console.error(error);
-      });
+  const onChangeElementType = (event) => {
+    setOptions([
+      <Input
+        style={{ marginBottom: "5px" }}
+        name="question"
+        placeholder="Option"
+        type="text"
+        className="inputText"
+        required
+      />,
+    ]);
+    const type = event.target.value;
+    if (type === "Checkboxes" || type === "Multiple Choice") {
+      setHidden(false);
+    } else {
+      setHidden(true);
+    }
   };
 
-  const onClickExport = () => {
-    toggle();
+  const OnClickAddOptionButton = () => {
+    setOptions(
+      options.concat(
+        <Input
+          style={{ marginBottom: "5px" }}
+          name="option"
+          placeholder="Option"
+          type="text"
+          className="inputText"
+          required
+        />
+      )
+    );
+  };
+
+  const OnClickDeleteOptionButton = () => {
+    if (options.length > 1)
+      setOptions(
+        options.filter((element, index) => index < options.length - 1)
+      );
   };
 
   const toggle = () => {
     setSweetalertUpdate(!sweetalertUpdate);
   };
 
-  const onClickQuestionsTab = () => {
-    getFormDetail(params.formId);
-    setIsAnswersPageActive(false);
+  const onClickExport = () => {
+    toggle();
   };
 
-  const getFormAnswers = async (link) => {
-    setIsBusyAnswers(true);
+  const updateFormApiRequest = async (form) => {
     const api = API_Config.url;
     const token = await getTokenSilently();
 
@@ -301,64 +502,20 @@ const FormDetail = (props) => {
       Authorization: `Bearer ${token}`,
     };
 
+    const newFormData = { title: form.title, description: form.description };
+
     await axios
-      .get(`${api}/forms/answers/answer/${link}`, {
+      .patch(`${api}/forms/${form.id}/`, newFormData, {
         headers: headers,
       })
       .then((response) => {
-        setFormAnswers(response.data);
-        setIsBusyAnswers(false);
+        console.log(response.data);
       })
       .catch((error) => {
         notify(error, "danger");
-        setIsBusyAnswers(false);
         console.error(error);
       });
   };
-
-  const onClickAnswersTab = () => {
-    const link = form.answer_link_id;
-    getFormAnswers(link);
-    setIsAnswersPageActive(true);
-  };
-
-  const groupBy = (key) => (array) =>
-    array.reduce((objectsByKeyValue, obj) => {
-      const value = obj[key];
-      objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
-      return objectsByKeyValue;
-    }, {});
-
-  const groupByQuestion = groupBy("question");
-  let groupedAnswers = groupByQuestion(formAnswers);
-
-  let answers = isBusyAnswers ? (
-    <Loading />
-  ) : (
-    Object.values(groupedAnswers).map((question, i) => {
-      const questionId = question[0].question;
-      return (
-        <Row key={i}>
-          <Col md="12">
-            <Card>
-              <CardBody>
-                <h4 key={i}>
-                  {formElements.filter((e) => (e.id = questionId))[0].question}
-                </h4>
-                <ListGroup>
-                  {Object.values(question).map((answer, i) => (
-                    <ListGroupItem key={i}>
-                      <label>{answer.answer}</label>
-                    </ListGroupItem>
-                  ))}
-                </ListGroup>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      );
-    })
-  );
 
   return (
     <div className="content">
@@ -372,9 +529,7 @@ const FormDetail = (props) => {
               <Button
                 size="sm"
                 onClick={onClickQuestionsTab}
-                className={
-                  isAnswersPageActive ? "btn-secondary" : "btn-warning"
-                }
+                className={isAnswersPageActive ? "btn-info" : "btn-secondary"}
               >
                 <input
                   defaultChecked
@@ -392,9 +547,7 @@ const FormDetail = (props) => {
               <Button
                 size="sm"
                 onClick={onClickAnswersTab}
-                className={
-                  isAnswersPageActive ? "btn-warning" : "btn-secondary"
-                }
+                className={isAnswersPageActive ? "btn-secondary" : "btn-info"}
               >
                 <input className="d-none" name="options" type="radio" />
                 <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
@@ -421,6 +574,11 @@ const FormDetail = (props) => {
                       name="title"
                       type="text"
                       defaultValue={form.title}
+                      onBlur={(e) => {
+                        form.title = e.target.value;
+                        setForm(form);
+                        updateFormApiRequest(form);
+                      }}
                       className="inputText"
                     />
                   </FormGroup>
@@ -431,6 +589,11 @@ const FormDetail = (props) => {
                       name="desc"
                       type="text"
                       defaultValue={form.description}
+                      onBlur={(e) => {
+                        form.description = e.target.value;
+                        setForm(form);
+                        updateFormApiRequest(form);
+                      }}
                       className="inputText"
                     />
                   </FormGroup>
@@ -441,7 +604,24 @@ const FormDetail = (props) => {
             <Col md="4">
               <Card className="card-user">
                 <CardBody>
-                  <Form onSubmit={onSubmit}>
+                  <Form onSubmit={onSaveFormElement}>
+                    <FormGroup>
+                      <Input
+                        id="type"
+                        name="type"
+                        placeholder="Type"
+                        type="select"
+                        className="inputText"
+                        onChange={onChangeElementType}
+                      >
+                        <option>Short Answer</option>
+                        <option>Paragraph</option>
+                        <option>Multiple Choice</option>
+                        <option>Checkboxes</option>
+                        <option>Date</option>
+                        <option>Time</option>
+                      </Input>
+                    </FormGroup>
                     <FormGroup>
                       <Input
                         id="question"
@@ -452,27 +632,53 @@ const FormDetail = (props) => {
                         required
                       />
                     </FormGroup>
-                    <FormGroup>
-                      <Input
-                        id="type"
-                        name="type"
-                        placeholder="Type"
-                        type="select"
-                        className="inputText"
-                      >
-                        <option>Short Answer</option>
-                        <option>Paragraph</option>
-                        <option>Multiple Choice</option>
-                        <option>Checkboxes</option>
-                        <option>Dropdown</option>
-                        <option>File Upload</option>
-                        <option>Date</option>
-                        <option>Time</option>
-                      </Input>
-                    </FormGroup>
+                    {!hidden && (
+                      <FormGroup>
+                        <Row>
+                          <Col md="7">
+                            {options.map((key, i) => (
+                              <Input
+                                key={i}
+                                style={{ marginBottom: "5px" }}
+                                name={`option_${i}`}
+                                placeholder="Option"
+                                type="text"
+                                className="inputText"
+                                required
+                              />
+                            ))}
+                          </Col>
+                          <Col md="2">
+                            <ButtonGroup float="right">
+                              <Button
+                                type="button"
+                                onClick={OnClickAddOptionButton}
+                                size="sm"
+                              >
+                                +
+                              </Button>
+                              <Button
+                                type="button"
+                                onClick={OnClickDeleteOptionButton}
+                                className="btn-danger"
+                                size="sm"
+                              >
+                                -
+                              </Button>
+                            </ButtonGroup>
+                          </Col>
+                        </Row>
+                      </FormGroup>
+                    )}
                     <Row className="text-center">
                       <Col md="6">
-                        <Button>Add</Button>
+                        {isFieldAdded ? (
+                          <Button>Add</Button>
+                        ) : (
+                          <Button disabled>
+                            <img src={loading} alt="loading" />
+                          </Button>
+                        )}
                       </Col>
                       <Col md="6">
                         <CustomInput
@@ -485,15 +691,7 @@ const FormDetail = (props) => {
                     </Row>
                   </Form>
                   <Row className="text-center">
-                    <Col md="6">
-                      <Button
-                        onClick={onClickSave}
-                        className="btn btn-block btn-primary"
-                      >
-                        Save
-                      </Button>
-                    </Col>
-                    <Col md="6">
+                    <Col md="12">
                       <Button
                         onClick={onClickExport}
                         className="btn btn-block btn-info"

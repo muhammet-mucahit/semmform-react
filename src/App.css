@@ -165,3 +165,8 @@
   background-color: #292929;
   border: none
 }
+
+img.warning {
+  margin-bottom: 20px;
+  width: 400px;
+}

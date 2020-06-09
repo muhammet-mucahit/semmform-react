@@ -145,7 +145,7 @@ const UserProfile = () => {
                         name="phone"
                         defaultValue={profile.phone}
                         placeholder="Phone"
-                        type="text"
+                        type="tel"
                         className="inputText"
                       />
                     </FormGroup>
@@ -158,7 +158,7 @@ const UserProfile = () => {
                         name="dob"
                         defaultValue={profile.dob}
                         placeholder="Date of Birth"
-                        type="text"
+                        type="date"
                         className="inputText"
                       />
                     </FormGroup>

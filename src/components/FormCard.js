@@ -1,24 +1,24 @@
 import React from "react";
 import { Row } from "reactstrap";
 import { Link } from "react-router-dom";
+import { truncate } from "utils/helper";
 
 const FormCard = (props) => {
-  const truncate = (str) => {
-    return str.length > 20 ? str.substring(0, 20) + "..." : str;
-  };
-
   return (
     <div className="font-icon-detail">
       <Link to={`/form/${props.id}`} className="simple-text logo-mini">
-        <i className="tim-icons icon-alert-circle-exc" />
+        <i className="tim-icons icon-notes" />
         <p style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
           {truncate(props.title)}
         </p>
       </Link>
+
       <Row>
         <div className="cardFooter">
           <div
-            onClick={() => props.onClickRename(props.id, props.title)}
+            onClick={() =>
+              props.onClickRename({ id: props.id, title: props.title })
+            }
             className="cardMiniButton"
           >
             &#x270E;

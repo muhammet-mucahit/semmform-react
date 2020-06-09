@@ -9,7 +9,7 @@ class Footer extends React.Component {
           <Nav>
             <NavItem>
               <NavLink href="https://semm-academy.github.io/#courses">
-                S3MM Academy
+                SEMM Academy
               </NavLink>
             </NavItem>
             <NavItem>
@@ -26,7 +26,7 @@ class Footer extends React.Component {
               rel="noopener noreferrer"
               target="_blank"
             >
-              S3MM Academy
+              SEMM Academy
             </a>{" "}
           </div>
         </Container>

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { NavLink as RouterNavLink } from "react-router-dom";
 import { useAuth0 } from "react-auth0-spa";
+import API_Config from "api_config.json";
+import axios from "axios";
+import { notify } from "utils/notification";
 import {
   Button,
   Collapse,
@@ -18,13 +21,48 @@ import {
   Modal,
 } from "reactstrap";
 
-const NavBar = () => {
+const NavBar = (props) => {
   const [collapseOpen, setCollapseOpen] = useState(false);
   const [modalSearch, setModalSearch] = useState(false);
   const toggleModalSearch = () => setModalSearch(!modalSearch);
   const toggleCollapse = () => setCollapseOpen(!collapseOpen);
-
+  const { forms, setForms, setIsBusy } = props;
+  const { getTokenSilently } = useAuth0();
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+
+  const newFormApiRequest = async (newFormData) => {
+    const api = API_Config.url;
+    const token = await getTokenSilently();
+
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    await axios
+      .post(`${api}/forms/`, newFormData, {
+        headers: headers,
+      })
+      .then((response) => {
+        setForms(forms.concat(response.data));
+        setIsBusy(false);
+        notify("New form created successfully", "success");
+      })
+      .catch((error) => {
+        notify(error, "danger");
+        console.error(error);
+      });
+  };
+
+  const onClickNewForm = (e) => {
+    // e.preventDefault();
+    setIsBusy(true);
+    const newFormData = {
+      title: "unnamed",
+      description: "no description",
+    };
+    newFormApiRequest(newFormData);
+  };
 
   const logoutWithRedirect = () =>
     logout({
@@ -61,26 +99,19 @@ const NavBar = () => {
                   Home
                 </NavLink>
               </NavItem>
-              <NavItem>
-                <NavLink
-                  tag={RouterNavLink}
-                  to="/external-api"
-                  exact
-                  activeClassName="router-link-exact-active"
-                >
-                  API
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
-                  tag={RouterNavLink}
-                  to="/form/new"
-                  exact
-                  activeClassName="router-link-exact-active"
-                >
-                  New Form
-                </NavLink>
-              </NavItem>
+              {isAuthenticated && (
+                <NavItem>
+                  <NavLink
+                    tag={RouterNavLink}
+                    // to={`/form/${form.id}`}
+                    to="/"
+                    onClick={onClickNewForm}
+                    activeClassName="router-link-exact-active"
+                  >
+                    New Form
+                  </NavLink>
+                </NavItem>
+              )}
             </Nav>
             <Nav className="ml-auto" navbar>
               {!isAuthenticated && (
