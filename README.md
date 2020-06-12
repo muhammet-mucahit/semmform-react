@@ -1,5 +1,4 @@
 ## Auth0
----
 
 <img src="https://www.drupal.org/files/project-images/auth0-logo-whitebg.png" alt="Auth0 Logo" width="400"/>
 
@@ -29,7 +28,6 @@
 
 
 ## Frontend Uygulaması (React SPA)
----
 
 Frontend uygulamasının çalıştırılabilmesi için öncelikle sistemde React'ın kurulu ve çalışabiliyor olması gerekmektedir. React'ın kurulumuna dair örnek bir dökümana [linkten](https://www.tutorialspoint.com/reactjs/reactjs_environment_setup.htm) ulaşılabilir.
 
@@ -60,6 +58,7 @@ Kodun içinde kullanılacak olan bazı değişkenlerin setlenmesi işleminin ard
 ```
 
 Bu dosyanın içeriğinde `domain` kısmının AUTH0 işlemleri yapılırken daha sonra kullanılmak üzere kaydedilen React SPA uygulamasının Domain kısmı ile, `clientId` kısmının ise yime aynı aşamada kaydedilen Client ID bilgisi ile doldurulması gerekmektedir.
+
 ![Domain](/doc_images/domain.png)
 ![ClientID](/doc_images/client_id.png)
 
@@ -87,7 +86,6 @@ Bütün bu işlemlerin sonucunda uygulama varsayılan olarak kullanıcın bilgis
 
 
 ## Backend Uygulaması (Django Rest)
----
 
 Backend uygulamasının çalıştırılabilmesi için öncelikle sisteminizde Python3 ve PostgreSQL kurulu olması gerekmektedir. Bunların kurulumundan sonra uygulamanın çalıştırılması adımlarına geçilebilir.
 
